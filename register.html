@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookie.js"></script>
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <h2>Registration</h2>
+        <label for="">Name:</label>
+        <input type="text" id="name"><br><br>
+        <label for="" id="msgemail">Email:</label>
+        <input type="email" id="email1"><br><br>
+        <label for="">Password:</label>
+        <input type="password" id="password1">
+        <input type="checkbox" onclick="show()"><br><br>
+        <label for="">Confirm Password:</label>
+        <input type="password" id="password2">
+         <input type="checkbox" onclick="show1()"><br><br>
+        <button onclick="register()">Submit</button>
+    </div>
+
+    <script>
+
+        function show(){
+            var a = document.getElementById("password1");
+            if(a.type=="password"){
+                a.type="text"
+            }else{
+                a.type = "password"
+            }
+        }
+        function show1(){
+            var a = document.getElementById("password2");
+            if(a.type=="password"){
+                a.type="text"
+            }else{
+                a.type = "password"
+            }
+        }
+        
+             function register() {
+            let name = $("#name").val();
+            let email = $("#email1").val();
+            let password = $("#password2").val();
+
+            if(valideteemail(email)==false){
+            document.getElementById("msgemail").innerHTML="Enter valide email.";
+               document.getElementById("email").focus();
+               
+           }
+           function valideteemail(email)
+           {
+               var pattern=new RegExp( /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+               return pattern.test(email)
+           }
+           if(password1 != password2){
+               alert("wrong password");
+               return ;
+           }
+           else{
+               alert("successful");
+           }
+
+
+            let data = {
+                data: {
+                    name: name,
+                    email: email,
+                    password: password
+                }
+            }
+            $.ajax({
+                type: 'post',
+                url: 'http://localhost:8081/register',
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                success: function (result) {
+                    result = JSON.parse(result);
+                    console.log(result);
+                    if (result.data.status == "success") {
+                        setcookie("usertype", "user");
+                        setcookie("userid", result.data.id);
+                        setcookie("username", name);
+                        window.location.replace("http://localhost:8081/user");
+                    }
+                    else {
+                        alert("Wrong credentials");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
