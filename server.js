@@ -7,9 +7,18 @@ var  Task  = require("./models/Task");
 const { status } = require("express/lib/response");
 var app = express();
 app.use(express.json());
+app.use(express.static("public"));
 app.get("/",function(req,res){
-    res.send("welcome to todolist");
+    res.sendFile(__dirname + "/pages/login.html");
 });
+app.get("/registerform",function(req,res){
+    res.sendFile(__dirname + "/pages/register.html");
+});
+
+app.get("/user",function(req,res){
+    res.sendFile(__dirname + "/pages/user.html");
+});
+
 app.post("/register",async(req,res)=>{
     let body = req.body;
     var user = new User.User();
@@ -19,7 +28,7 @@ app.post("/register",async(req,res)=>{
     user.password = body.data.password;
         
     user.register().then(result=>{
-        console.log("Result")
+        console.log("Result");
         console.log(result);
         let data = {
             "data":{
@@ -46,7 +55,7 @@ app.post("/login",(req,res)=>{
     user.password = body.data.password;
 
     user.login().then(result=>{
-        console.log("Result")
+        console.log("Result");
         console.log(result);
         let data ={
             "status":"fail"
@@ -54,7 +63,7 @@ app.post("/login",(req,res)=>{
         if(result.length !=0){
             data = {
                 "status" : "success",
-                "Data" : result
+                "data" : result
             }
         }
         res.end(JSON.stringify(data));
@@ -80,7 +89,7 @@ app.post("/savetask",(req,res)=>{
   
 
     task.save().then(result=>{
-        console.log("Result")
+        console.log("Result");
         console.log(result);
         let data ={
             "status":"fail"
@@ -136,10 +145,10 @@ app.post("/changestatus",(req,res)=>{
     let body = req.body;
     let task = new Task.Task();
     task.id = body.data.id;
-    task.status = body.data,status;
+    task.status = body.data.status;
 
     task.changestatus().then(result=>{
-        console.log("Result")
+        console.log("Result");
         console.log(result);
         let data ={
             "status":"fail"
@@ -165,22 +174,16 @@ app.post("/gettask",(req,res)=>{
     let body = req.body;
     let task = new Task.Task();
     task.id = body.data.id;
-    task.user_id = body.data.user_id;
-    task.tdate = body.data.tdate;
-    task.ttime = body.data.ttime;
-    task.ttask = body.data.ttask;
-    task.status = body.data,status;
-
     task.gettask().then(result=>{
-        console.log("Result")
+        console.log("Result");
         console.log(result);
         let data ={
             "status":"fail"
         }
         if(result.length !=0){
-            data = {
-                "status" : "success"
-                 }
+            data ={
+                data: result
+            }            
         }
         res.end(JSON.stringify(data));
     },
@@ -198,22 +201,18 @@ app.post("/gettask",(req,res)=>{
 app.post("/listtask",(req,res)=>{
     let body = req.body;
     let task = new Task.Task();
-    task.id = body.data.id;
     task.user_id = body.data.user_id;
-    task.tdate = body.data.tdate;
-    task.ttime = body.data.ttime;
-    task.ttask = body.data.ttask;
-    task.status = body.data,status;
-
+    
     task.listtask().then(result=>{
-        console.log("Result")
+        console.log("Result");
         console.log(result);
         let data ={
             "status":"fail"
         }
         if(result.length !=0){
             data = {
-                "status" : "success"
+                "status" : "success",
+                "data" : result
                  }
         }
         res.end(JSON.stringify(data));
